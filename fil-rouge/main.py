@@ -17,10 +17,8 @@ for i, node1 in enumerate(customers):
     for node2 in customers:
         distances[(node1.code, node2.code)] = util.distance(node1.lat, node2.lat, node1.long, node2.long)
 
-print(distances)
 
 # def recuilt(max_iter):
 #     s = get_initial_solution()
 #     n_iter = 0
 #     new_cycle = True
-    

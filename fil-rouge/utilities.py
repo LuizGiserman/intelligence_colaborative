@@ -4,10 +4,10 @@ from node import node
 import pandas as pd
 import random
 
-def costFunction(solution, distances, numberVehicles = 1, omega = 0):
+def cost_function(solution, distances, numberVehicles = 1, omega = 0):
     total_distance = 0
     for i in range(len(solution)-1):
-        total_distance += distances[(solution[i], solution[i+1])]
+        total_distance += distances[(solution[i][1], solution[i+1][1])]
     return omega*numberVehicles + total_distance
 
 #
