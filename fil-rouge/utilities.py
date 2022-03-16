@@ -1,7 +1,8 @@
+from locale import currency
 from math import radians, cos, sin, asin, sqrt
-from re import X
 from node import node
 import pandas as pd
+import random
 
 def costFunction(solution, distances, numberVehicles = 1, omega = 0):
     total_distance = 0
@@ -42,5 +43,33 @@ def load_customers():
         customers.append(node(customer['CUSTOMER_NUMBER'], customer['CUSTOMER_CODE'],
         customer['TOTAL_WEIGHT_KG'], customer['TOTAL_VOLUME_M3'], customer['CUSTOMER_TIME_WINDOW_FROM_MIN'],
         customer['CUSTOMER_TIME_WINDOW_TO_MIN'], customer['CUSTOMER_LATITUDE'], customer['CUSTOMER_LONGITUDE']))
-    customers.append(node(0, 0, 0, 0, 43,37391833, 17,60171712))
+    customers.append(node(0, 0, 0, 0, 0, 0, 43.37391833, 17.60171712))
     return customers
+
+def generate_initial_solution(capacity, customers):
+
+    visited = {}
+    solution = []
+    current_capacity = capacity
+    n_customers = len(customers)
+    for customer in customers:
+        visited[(customer.number, customer.code)] = 0
+    
+    solution.append((0, 0))
+    visited[(0, 0)] = 1
+
+    for i in range(n_customers):
+        new = random.randint(0, n_customers-1)
+        while (visited[(customers[new].number, customers[new].code)] == 1):
+            new = random.randint(0, n_customers-1)
+        
+        if (customers[new].vol > current_capacity):
+            solution.append((0, 0))
+            current_capacity = capacity
+       
+        solution.append((customers[new].number, customers[new].code))
+        current_capacity -= customers[new].vol
+
+    return solution
+        
+    
