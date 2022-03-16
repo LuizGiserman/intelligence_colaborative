@@ -20,6 +20,7 @@ for i, node1 in enumerate(customers):
         aux.append(util.distance(node1.lat, node2.lat, node1.long, node2.long))
     distances.append(aux)
 
+print(distances[50])
 
-print(customers[3-1].get_distance(1, distances))
+print(customers[50].get_distance(1158, distances))
 
