@@ -29,11 +29,10 @@ def distance(lat1, lat2, lon1, lon2):
 
 def load_customers():
     customers = []
-    customers_xls = pd.ExcelFile(r"bd/2_detail_table_customers.xls") #use r before absolute file path 
+    customers_xls = pd.ExcelFile(r"bd/2_detail_table_customers.xls")
     customers_parsed = customers_xls.parse(0) 
     for index, customer in customers_parsed.iterrows():
         customers.append(node(customer['CUSTOMER_NUMBER'], customer['CUSTOMER_CODE'],
         customer['TOTAL_WEIGHT_KG'], customer['TOTAL_VOLUME_M3'], customer['CUSTOMER_TIME_WINDOW_FROM_MIN'],
         customer['CUSTOMER_TIME_WINDOW_TO_MIN'], customer['CUSTOMER_LATITUDE'], customer['CUSTOMER_LONGITUDE']))
     return customers
-    
