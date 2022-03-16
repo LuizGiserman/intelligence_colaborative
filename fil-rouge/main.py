@@ -2,8 +2,10 @@ from node import node
 import numpy as np
 import utilities as util
 import pandas as pd
+import tabou
+import matplotlib.pyplot as plt
 
-
+vehicle_capacity = 20
 
 customers = util.load_customers()
 
@@ -17,6 +19,13 @@ for i, node1 in enumerate(customers):
     for node2 in customers:
         distances[(node1.code, node2.code)] = util.distance(node1.lat, node2.lat, node1.long, node2.long)
 
+solution = util.generate_initial_solution(vehicle_capacity, customers)
+
+solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
+
+plt.plot(graph)
+plt.grid(True)
+plt.show()
 
 # def recuilt(max_iter):
 #     s = get_initial_solution()
