@@ -1,4 +1,7 @@
 from math import radians, cos, sin, asin, sqrt
+
+#
+## Get distance from lat and long values.
 def distance(lat1, lat2, lon1, lon2):
      
     # The math module contains a function named
