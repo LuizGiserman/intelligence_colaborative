@@ -1,3 +1,4 @@
+from locale import currency
 from math import radians, cos, sin, asin, sqrt
 from node import node
 import pandas as pd
@@ -43,6 +44,7 @@ def generate_initial_solution(capacity, customers):
 
     visited = {}
     solution = []
+    current_capacity = capacity
     n_customers = len(customers)
     for customer in customers:
         visited[(customer.number, customer.code)] = 0
@@ -51,12 +53,16 @@ def generate_initial_solution(capacity, customers):
     visited[(0, 0)] = 1
 
     for i in range(n_customers):
-        if (i % capacity == 0 ):
-            solution.append((0, 0))
         new = random.randint(0, n_customers-1)
         while (visited[(customers[new].number, customers[new].code)] == 1):
             new = random.randint(0, n_customers-1)
+        
+        if (customers[new].vol > current_capacity):
+            solution.append((0, 0))
+            current_capacity = capacity
+       
         solution.append((customers[new].number, customers[new].code))
+        current_capacity -= customers[new].vol
 
     return solution
         
