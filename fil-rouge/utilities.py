@@ -3,6 +3,12 @@ from re import X
 from node import node
 import pandas as pd
 
+def costFunction(solution, distances, numberVehicles = 1, omega = 0):
+    total_distance = 0
+    for i in range(len(solution)-1):
+        total_distance += distances[(solution[i], solution[i+1])]
+    return omega*numberVehicles + total_distance
+
 #
 ## Get distance from lat and long values.
 def distance(lat1, lat2, lon1, lon2):
@@ -36,5 +42,5 @@ def load_customers():
         customers.append(node(customer['CUSTOMER_NUMBER'], customer['CUSTOMER_CODE'],
         customer['TOTAL_WEIGHT_KG'], customer['TOTAL_VOLUME_M3'], customer['CUSTOMER_TIME_WINDOW_FROM_MIN'],
         customer['CUSTOMER_TIME_WINDOW_TO_MIN'], customer['CUSTOMER_LATITUDE'], customer['CUSTOMER_LONGITUDE']))
-    customers.append(node(0, 0, 0, 0, 0, 0, 0, 43,37391833, 17,60171712))
+    customers.append(node(0, 0, 0, 0, 43,37391833, 17,60171712))
     return customers
