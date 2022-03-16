@@ -4,6 +4,7 @@ from node import node
 import pandas as pd
 import random
 
+# Get the cost of a solution
 def cost_function(solution, distances, numberVehicles = 1, omega = 0):
     total_distance = 0
     for i in range(len(solution)-1):
@@ -46,6 +47,34 @@ def load_customers():
     customers.append(node(0, 0, 0, 0, 0, 0, 43.37391833, 17.60171712))
     return customers
 
+def generate_neighborhood(solution, customers, vehicleCapacity, numberNeighbors = 5, switchNodes = 5):
+    neighborhood = []
+
+    for neighbor in range(numberNeighbors):
+        is_possible_solution = False
+        while not is_possible_solution:
+            new_solution = solution.copy()
+            is_possible_solution = True
+            current_capacity = vehicleCapacity
+            for node in range(switchNodes):
+                node1, node2 = random.randint(0, len(new_solution)-1), random.randint(0, len(new_solution)-1)
+
+                while node1 == node2:
+                    node1, node2 = random.randint(0, len(new_solution)-1), random.randint(0, len(new_solution)-1)
+                new_solution[node1], new_solution[node2] = new_solution[node2], new_solution[node1]
+
+            for customer in new_solution:
+                if customer == (0, 0, 0):
+                    current_capacity = vehicleCapacity
+                else:
+                    current_capacity -= customers[customer[2]].vol
+                if current_capacity < 0:
+                    is_possible_solution = False
+
+        neighborhood.append(new_solution)
+    
+    return neighborhood
+
 def generate_initial_solution(capacity, customers):
 
     visited = {}
@@ -55,7 +84,7 @@ def generate_initial_solution(capacity, customers):
     for customer in customers:
         visited[(customer.number, customer.code)] = 0
     
-    solution.append((0, 0))
+    solution.append((0, 0, 0))
     visited[(0, 0)] = 1
 
     for i in range(n_customers):
@@ -64,10 +93,10 @@ def generate_initial_solution(capacity, customers):
             new = random.randint(0, n_customers-1)
         
         if (customers[new].vol > current_capacity):
-            solution.append((0, 0))
+            solution.append((0, 0, 0))
             current_capacity = capacity
        
-        solution.append((customers[new].number, customers[new].code))
+        solution.append((customers[new].number, customers[new].code, new))
         current_capacity -= customers[new].vol
 
     return solution
