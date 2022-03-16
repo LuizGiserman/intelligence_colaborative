@@ -2,6 +2,8 @@ from node import node
 import numpy as np
 import utilities as util
 import pandas as pd
+import math
+import random
 
 
 
@@ -18,7 +20,29 @@ for i, node1 in enumerate(customers):
         distances[(node1.code, node2.code)] = util.distance(node1.lat, node2.lat, node1.long, node2.long)
 
 
-# def recuilt(max_iter):
-#     s = get_initial_solution()
-#     n_iter = 0
-#     new_cycle = True
+def recuilt(t=150, max_iter=30, a=0.95):
+    s_best = util.generate_initial_solution(15.5, customers)
+    s = s_best
+    n_iter = 0
+    new_cycle = True
+    while (new_cycle == True):
+        n_iter = 0
+        new_cycle = False
+        while(n_iter < max_iter):
+            n_iter += 1
+            new_s = util.generate_initial_solution(15.5, customers)
+            diff = util.cost_function(new_s, distances) - util.cost_function(s, distances)
+            if (diff < 0):
+                s = new_s
+                new_cycle = True
+            else:
+                prob = math.exp(-util.cost_function(s, distances)/t)
+                q = random.uniform(0,1)
+                if (q < prob):
+                    s = new_s
+                    new_cycle = True
+            if (util.cost_function(s, distances) < util.cost_function(s_best, distances)):
+                s_best = s
+        t = a*t
+    
+    return s_best
