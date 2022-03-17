@@ -1,19 +1,54 @@
 import utilities as util
+import random
 
 def selection (pop_before) :
     return pop_before[:int(len(pop_before)/2)]
 
 def pairing (len_pop) :
     pairs = []
-    for index in range(int(len_pop / 2)):
-        pairs.append((index, int(len_pop - index - 1)))
+    for index in range(len_pop - 1):
+        pairs.append((index, index + 1))
+    
+    pairs.append((len_pop - 1, 0))
     
     return pairs
 
-def genetic (solutions, distances, max_iterations = 40) :
+
+def crossing_over(solution1, solution2, customers, vehicle_capacity=20):
+    child1 = [i for i in solution1 if i != (0,0,0)]
+    child2 = [i for i in solution2 if i != (0,0,0)]
+    
+    end_point = len(child1)-1
+    start_point = random.randint(0, end_point-1)
+
+    child1[start_point : end_point+1], child2[start_point : end_point+1] = child2[start_point : end_point+1], child1[start_point : end_point+1]
+
+    outside = []
+    for i in child1:
+        if not i in child2:
+            outside.append(i)
+    for i in range(len(child2)-1):
+        if child2[i] in child2[i+1:]:
+            child2[i] = outside.pop()
+    
+    current_capacity = vehicle_capacity
+    child = []
+    for gene in child2:
+        if current_capacity - customers[gene[2]].vol < 0:
+            current_capacity = vehicle_capacity
+            child.append((0,0,0))    
+
+        child.append(gene)
+        current_capacity -= customers[gene[2]].vol
+    
+    return child
+
+
+def genetic (solutions, distances, customers, max_iterations = 20, vehicle_capacity = 20) :
 
     pop_before = []
     pop = []
+    pop_after = []
     pairs = []
 
     for solution in solutions :
@@ -22,13 +57,25 @@ def genetic (solutions, distances, max_iterations = 40) :
 
     for index in range(max_iterations) :
 
-        print(len(pop_before))
         pop_before  = sorted(pop_before, key = lambda i: i['fitness'])
         pop = selection(pop_before).copy()
 
         pairs = pairing(len(pop))
 
-        break
+        for pair in (pairs) :
+            individual = crossing_over(pop[pair[0]]["individual"], pop[pair[1]]["individual"], customers, vehicle_capacity)
+            pop.append({"individual":individual, "fitness":util.cost_function(individual, distances)})
+        
+        pop_after.clear()
+        for individual in pop :
+            aux_individual = util.generate_neighborhood(individual["individual"], customers, vehicle_capacity, 1, 5)[0]
+            pop_after.append({"individual":aux_individual, "fitness":util.cost_function(aux_individual, distances)})
+
+        pop_before = pop_after
+
+    pop_before  = sorted(pop_before, key = lambda i: i['fitness'])
+    
+    return pop_before[0]["individual"]
 
 
 

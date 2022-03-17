@@ -20,17 +20,18 @@ for i, node1 in enumerate(customers):
     for node2 in customers:
         distances[(node1.code, node2.code)] = util.distance(node1.lat, node2.lat, node1.long, node2.long)
 
-solution = util.generate_initial_solution(vehicle_capacity, customers)
+solutions = []
+for i in range(20) :
+    solutions.append(util.generate_initial_solution(vehicle_capacity, customers))
 
-# solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
+solution_tabou, graph = tabou.tabou(solutions[0], customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
 
+#solutions.append(solution_tabou)
+solution_genetic = genetic.genetic(solutions, distances, customers)
+
+print("resultat tabou: ", util.cost_function(solution_tabou, distances))
+print("resultat genetic: ", util.cost_function(solution_genetic, distances))
 # plt.plot(graph)
 # plt.grid(True)
 # plt.show()
 
-solutions = []
-
-for i in range(20) :
-    solutions.append(util.generate_initial_solution(vehicle_capacity, customers))
-
-genetic.genetic(solutions, distances)
