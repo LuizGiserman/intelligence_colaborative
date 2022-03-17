@@ -3,6 +3,7 @@ import numpy as np
 import utilities as util
 import pandas as pd
 import tabou
+import genetic
 import matplotlib.pyplot as plt
 
 vehicle_capacity = 20
@@ -21,13 +22,15 @@ for i, node1 in enumerate(customers):
 
 solution = util.generate_initial_solution(vehicle_capacity, customers)
 
-solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
+# solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
 
-plt.plot(graph)
-plt.grid(True)
-plt.show()
+# plt.plot(graph)
+# plt.grid(True)
+# plt.show()
 
-# def recuilt(max_iter):
-#     s = get_initial_solution()
-#     n_iter = 0
-#     new_cycle = True
+solutions = []
+
+for i in range(20) :
+    solutions.append(util.generate_initial_solution(vehicle_capacity, customers))
+
+genetic.genetic(solutions, distances)
