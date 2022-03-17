@@ -50,6 +50,7 @@ def genetic (solutions, distances, customers, max_iterations = 20, vehicle_capac
     pop = []
     pop_after = []
     pairs = []
+    graph = []
 
     for solution in solutions :
             pop_before.append({"individual":solution, "fitness":util.cost_function(solution, distances)})
@@ -65,6 +66,8 @@ def genetic (solutions, distances, customers, max_iterations = 20, vehicle_capac
         for pair in (pairs) :
             individual = crossing_over(pop[pair[0]]["individual"], pop[pair[1]]["individual"], customers, vehicle_capacity)
             pop.append({"individual":individual, "fitness":util.cost_function(individual, distances)})
+
+            graph.append(util.cost_function(pop[pair[0]]["individual"], distances))
         
         pop_after.clear()
         for individual in pop :
@@ -75,7 +78,7 @@ def genetic (solutions, distances, customers, max_iterations = 20, vehicle_capac
 
     pop_before  = sorted(pop_before, key = lambda i: i['fitness'])
     
-    return pop_before[0]["individual"]
+    return pop_before[0]["individual"], graph
 
 
 
