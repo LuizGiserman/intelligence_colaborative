@@ -1,8 +1,11 @@
 import utilities as util
 import math
-import random
+import random 
+import matplotlib.pyplot as plt
 
-def recuit(customers, distances, t=150, max_iter=30, a=0.95):
+
+def recuit(customers, distances, t=300, max_iter=100, a=0.65):
+    costs_to_plot = []
     s_best = util.generate_initial_solution(15.5, customers)
     s = s_best
     n_iter = 0
@@ -25,6 +28,7 @@ def recuit(customers, distances, t=150, max_iter=30, a=0.95):
                     new_cycle = True
             if (util.cost_function(s, distances) < util.cost_function(s_best, distances)):
                 s_best = s
+            costs_to_plot.append(util.cost_function(s, distances))
         t = a*t
     
-    return s_best
+    return s_best, costs_to_plot
