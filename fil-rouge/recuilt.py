@@ -7,6 +7,7 @@ def recuilt(customers, distances, vehicle_capacity=20, t=150, max_iter=30, a=0.9
     s = s_best
     n_iter = 0
     new_cycle = True
+    graph = []
     while (new_cycle == True):
         n_iter = 0
         new_cycle = False
@@ -26,5 +27,6 @@ def recuilt(customers, distances, vehicle_capacity=20, t=150, max_iter=30, a=0.9
             if (util.cost_function(s, distances) < util.cost_function(s_best, distances)):
                 s_best = s
         t = a*t
+        graph.append(util.cost_function(s, distances))
     
-    return s_best
+    return s_best, graph

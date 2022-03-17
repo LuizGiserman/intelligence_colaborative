@@ -38,8 +38,11 @@ print("resultat genetic: ", util.cost_function(solution_genetic, distances))
 # plt.grid(True)
 # plt.show()
 
-recuilt_best = recuilt.recuilt(customers, distances, vehicle_capacity)
+recuilt_best, graph_recuilt = recuilt.recuilt(customers, distances, vehicle_capacity)
 print('resultat recuilt : ' + str(util.cost_function(recuilt_best, distances)))
+plt.plot(graph_recuilt)
+plt.grid(True)
+plt.show()
 
 # def recuilt(t=150, max_iter=30, a=0.95):
 #     s_best = util.generate_initial_solution(15.5, customers)
