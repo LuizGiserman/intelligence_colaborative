@@ -21,7 +21,7 @@ for i, node1 in enumerate(customers):
 
 solution = util.generate_initial_solution(vehicle_capacity, customers)
 
-solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=50, number_neighbors=10)
+solution_tabou, graph = tabou.tabou(solution, customers, vehicle_capacity, distances, max_iterations=10, number_neighbors=2)
 
 plt.plot(graph)
 plt.grid(True)
