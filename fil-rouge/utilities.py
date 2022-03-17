@@ -47,6 +47,35 @@ def load_customers():
     customers.append(node(0, 0, 0, 0, 0, 0, 43.37391833, 17.60171712))
     return customers
 
+def crossing_over(solution1, solution2, customers, vehicle_capacity=20):
+    child1 = [i for i in solution1 if i != (0,0,0)]
+    child2 = [i for i in solution2 if i != (0,0,0)]
+    
+    end_point = len(child1)-1
+    start_point = random.randint(0, end_point-1)
+
+    child1[start_point : end_point+1], child2[start_point : end_point+1] = child2[start_point : end_point+1], child1[start_point : end_point+1]
+
+    outside = []
+    for i in child1:
+        if not i in child2:
+            outside.append(i)
+    for i in range(len(child2)-1):
+        if child2[i] in child2[i+1:]:
+            child2[i] = outside.pop()
+    
+    current_capacity = vehicle_capacity
+    child = []
+    for gene in child2:
+        if current_capacity - customers[gene[2]].vol < 0:
+            current_capacity = vehicle_capacity
+            child.append((0,0,0))    
+
+        child.append(gene)
+        current_capacity -= customers[gene[2]].vol
+    
+    return child
+
 def generate_neighborhood(solution, customers, vehicleCapacity, numberNeighbors = 5, switchNodes = 5):
     neighborhood = []
 
@@ -76,29 +105,44 @@ def generate_neighborhood(solution, customers, vehicleCapacity, numberNeighbors 
     return neighborhood
 
 def generate_initial_solution(capacity, customers):
+    customers_clone = customers.copy()
 
-    visited = {}
-    solution = []
+    solution = [(0,0,0)]
     current_capacity = capacity
-    n_customers = len(customers)
-    for customer in customers:
-        visited[(customer.number, customer.code)] = 0
-    
-    solution.append((0, 0, 0))
-    visited[(0, 0)] = 1
 
-    for i in range(n_customers):
-        new = random.randint(0, n_customers-1)
-        while (visited[(customers[new].number, customers[new].code)] == 1):
-            new = random.randint(0, n_customers-1)
-        
-        if (customers[new].vol > current_capacity):
-            solution.append((0, 0, 0))
+    while len(customers_clone) > 0:
+        node_elt = customers_clone.pop(random.randint(0,len(customers_clone)-1))
+
+        if current_capacity - node_elt.vol < 0:
             current_capacity = capacity
-       
-        solution.append((customers[new].number, customers[new].code, new))
-        current_capacity -= customers[new].vol
+            solution.append((0,0,0))    
 
+        solution.append((node_elt.number, node_elt.code, customers.index(node_elt)))
+        current_capacity -= node_elt.vol
     return solution
+
+    # visited = {}
+    # solution = []
+    # current_capacity = capacity
+    # n_customers = len(customers)
+    # for customer in customers:
+    #     visited[(customer.number, customer.code, )] = 0
+    
+    # solution.append((0, 0, 0))
+    # visited[(0, 0, 0)] = 1
+
+    # for i in range(n_customers):
+    #     new = random.randint(0, n_customers-1)
+    #     while (visited[(customers[new].number, customers[new].code, new)] == 1):
+    #         new = random.randint(0, n_customers-1)
+        
+    #     if (customers[new].vol > current_capacity):
+    #         solution.append((0, 0, 0))
+    #         current_capacity = capacity
+       
+    #     solution.append((customers[new].number, customers[new].code, new))
+    #     current_capacity -= customers[new].vol
+
+    # return solution
         
     
