@@ -7,11 +7,12 @@ from mesa.time import RandomActivation
 from utilities import Util as util
 
 class tabouAgent(mesa.Agent):
-    def __init__(self, id, model, new_util : util, number_neighbors = 5):
+    def __init__(self, id, model, new_util : util, max_iter = 10, number_neighbors = 5):
         super().__init__(id, model)
         self.customers = new_util.customers
         self.vehicle_capacity = new_util.vehicle_capacity
         self.distances = new_util.distances
+        self.max_iter = max_iter
         self.number_neighbors = number_neighbors
         self.solution = new_util.generate_initial_solution()
         self.visited_solutions = []
@@ -21,7 +22,7 @@ class tabouAgent(mesa.Agent):
         best_solution = self.solution.copy()
         current_solution = self.solution.copy()
         
-        for i in range(20):
+        for i in range(self.max_iter):
             neighborhood = self.new_util.generate_neighborhood(current_solution, switchNodes=self.number_neighbors)
 
             best_neighbor = neighborhood[0]
