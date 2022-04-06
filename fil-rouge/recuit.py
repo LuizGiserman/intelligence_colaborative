@@ -9,7 +9,7 @@ from utilities import Util as util
 
 
 class recuitAgent(mesa.Agent):
-    def __init__(self, id, new_util, t, max_iter, a, model):
+    def __init__(self, id, model, new_util, t, max_iter, a):
         super().__init__(id, model)
         self.id = id
         self.customers = new_util.customers

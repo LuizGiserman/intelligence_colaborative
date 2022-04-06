@@ -4,14 +4,17 @@ import mesa
 from mesa.space import MultiGrid
 from datetime import datetime
 from mesa.time import RandomActivation
+from utilities import Util as util
 
 class geneticAgent(mesa.Agent):
-    def __init__(self, id, model, customers, vehicle_capacity, distances, number_solutions = 10):
+    def __init__(self, id, model, new_util : util, max_iter = 3, number_solutions = 20):
         super().__init__(id, model)
-        self.customers = customers
-        self.vehicle_capacity = vehicle_capacity
-        self.distances = distances
-        self.solutions = [util.generate_initial_solution(vehicle_capacity, customers) for i in range(number_solutions)]
+        self.customers = new_util.customers
+        self.vehicle_capacity = new_util.vehicle_capacity
+        self.distances = new_util.distances
+        self.solutions = [new_util.generate_initial_solution() for i in range(number_solutions)]
+        self.new_util = new_util
+        self.max_iter = max_iter
 
     def selection (self, pop_before) :
         return pop_before[:int(len(pop_before)/2)]
@@ -61,10 +64,10 @@ class geneticAgent(mesa.Agent):
         pairs = []
 
         for solution in self.solutions :
-                pop_before.append({"individual":solution, "fitness":util.cost_function(solution, self.distances)})
+            pop_before.append({"individual":solution, "fitness":self.new_util.cost_function(solution)})
                 
 
-        for index in range(1) :
+        for index in range(self.max_iter) :
 
             pop_before  = sorted(pop_before, key = lambda i: i['fitness'])
             pop = self.selection(pop_before).copy()
@@ -73,18 +76,19 @@ class geneticAgent(mesa.Agent):
 
             for pair in (pairs) :
                 individual = self.crossing_over(pop[pair[0]]["individual"], pop[pair[1]]["individual"], self.customers, self.vehicle_capacity)
-                pop.append({"individual":individual, "fitness":util.cost_function(individual, self.distances)})
+                pop.append({"individual":individual, "fitness":self.new_util.cost_function(individual)})
             
             pop_after.clear()
             for individual in pop :
-                aux_individual = util.generate_neighborhood(individual["individual"], self.customers, self.vehicle_capacity, 1, 5)[0]
-                pop_after.append({"individual":aux_individual, "fitness":util.cost_function(aux_individual, self.distances)})
+                aux_individual = self.new_util.generate_neighborhood(individual["individual"], numberNeighbors=1, switchNodes=5)[0]
+                pop_after.append({"individual":aux_individual, "fitness":self.new_util.cost_function(aux_individual)})
 
             pop_before = pop_after
 
         pop_before  = sorted(pop_before, key = lambda i: i['fitness'])
         
         self.solutions = [i["individual"] for i in pop_before]
+
     def eval(self):
         return self.solutions[0]
 
