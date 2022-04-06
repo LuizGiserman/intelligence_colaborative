@@ -1,8 +1,12 @@
 import utilities as util
 import random
 import math
+import mesa
+from mesa.space import MultiGrid
+from datetime import datetime
+from mesa.time import RandomActivation
 
-def recuilt(customers, distances, vehicle_capacity=20, t=150, max_iter=30, a=0.95):
+def recuit(customers, distances, vehicle_capacity=20, t=150, max_iter=30, a=0.95):
     s_best = util.generate_initial_solution(15.5, customers)
     s = s_best
     n_iter = 0
@@ -30,3 +34,8 @@ def recuilt(customers, distances, vehicle_capacity=20, t=150, max_iter=30, a=0.9
         t = a*t
     
     return s_best, graph
+
+
+class recuitAgent(mesa.Agent):
+      def __init__(self, id, M, model):
+        

@@ -6,7 +6,7 @@ import math
 import random
 import tabou
 import genetic
-import recuilt
+import recuit
 import matplotlib.pyplot as plt
 
 vehicle_capacity = 20
@@ -39,7 +39,7 @@ print("resultat tabou: ", util.cost_function(solution_tabou, distances))
 print("resultat genetic: ", util.cost_function(solution_genetic, distances))
 
 
-recuilt_best, graph_recuilt = recuilt.recuilt(customers, distances, vehicle_capacity)
+recuilt_best, graph_recuilt = recuit.recuilt(customers, distances, vehicle_capacity)
 print('resultat recuilt : ' + str(util.cost_function(recuilt_best, distances)))
 # plt.plot(graph_recuilt)
 # plt.grid(True)
