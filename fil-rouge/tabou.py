@@ -20,7 +20,7 @@ class tabouAgent(mesa.Agent):
     def step(self):
         best_solution = self.solution.copy()
         current_solution = self.solution.copy()
-
+        
         for i in range(20):
             neighborhood = self.new_util.generate_neighborhood(current_solution, switchNodes=self.number_neighbors)
 
@@ -73,4 +73,3 @@ class tabouAgent(mesa.Agent):
 #         iteration += 1
 
 #     return best_solution, graph
-
