@@ -35,7 +35,7 @@ class GlobalMASModel(mesa.Model):
     self.evaluator.step(self.listTabou, self.listRecuit, self.listGenetic)
 
 model = GlobalMASModel()
-for i in range(20):
+for i in range(10):
   print(i)
   model.step()
 

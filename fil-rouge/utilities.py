@@ -3,6 +3,7 @@ from math import radians, cos, sin, asin, sqrt
 from node import node
 import pandas as pd
 import random
+from neighborhood import functionHandler
 
 class Util():
     def __init__(self):
@@ -19,6 +20,17 @@ class Util():
         for i, node1 in enumerate(self.customers):
             for node2 in self.customers:
                 self.distances[(node1.code, node2.code)] = self.distance(node1.lat, node2.lat, node1.long, node2.long)
+
+        # Q-learning params
+        self.Q = 8*[8*[0]]  # Initialization for Q matrix
+        self.alpha = 0.1
+        self.gamma = 0.9
+        self.epsilon = 0.1
+        self.currentState = random.randint(0,7)
+        self.action = self.currentState
+        self.exploitOnly = False
+
+        self.functionHandler = functionHandler()
 
 
     # Get the cost of a solution
@@ -64,7 +76,19 @@ class Util():
         customers.append(node(0, 0, 0, 0, 0, 0, 43.37391833, 17.60171712))
         return customers
 
-    def generate_neighborhood(self, solution, numberNeighbors = 5, switchNodes = 5):
+    def newAction(self):
+        # Choose the neighborhood generation function using Q-learning
+        self.currentState = self.action
+        if not self.exploitOnly :
+            p = random.uniform(0,1)
+            if p < self.epsilon :
+                self.action = random.randint(0,7)
+            else :
+                self.action = self.Q[self.currentState].index(max(self.Q[self.currentState]))
+        else :
+            self.action = self.Q[self.currentState].index(max(self.Q[self.currentState]))
+
+    def generate_neighborhood(self, solution, numberNeighbors = 5, repeat = 1):
         neighborhood = []
 
         for neighbor in range(numberNeighbors):
@@ -73,13 +97,10 @@ class Util():
                 new_solution = solution.copy()
                 is_possible_solution = True
                 current_capacity = self.vehicle_capacity
-                for node in range(switchNodes):
-                    node1, node2 = random.randint(0, len(new_solution)-1), random.randint(0, len(new_solution)-1)
+                for node in range(repeat):
+                    new_solution = self.functionHandler.execute(self.action, solution)
 
-                    while node1 == node2:
-                        node1, node2 = random.randint(0, len(new_solution)-1), random.randint(0, len(new_solution)-1)
-                    new_solution[node1], new_solution[node2] = new_solution[node2], new_solution[node1]
-
+                # Verify whether the function is possible or not
                 for customer in new_solution:
                     if customer == (0, 0, 0):
                         current_capacity = self.vehicle_capacity
@@ -108,6 +129,11 @@ class Util():
             solution.append((node_elt.number, node_elt.code, self.customers.index(node_elt)))
             current_capacity -= node_elt.vol
         return solution
+    
+    def Q_learning(self, initialCost, currentCost):
+        reward = initialCost - currentCost
+        self.Q[self.currentState][self.action] = (1-self.alpha)*self.Q[self.currentState][self.action] + self.alpha*(reward + self.gamma*max(self.Q[self.action]))
+        self.newAction()
 
     # visited = {}
     # solution = []
