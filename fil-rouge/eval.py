@@ -33,21 +33,27 @@ class evalAgent(mesa.Agent):
   def step(self, agentsTabou, agentsRecuit, agentsGenetic):
     aux_list = []
     for agent in agentsTabou:
-      item = {"agent" : agent.eval(), "cost" : self.util.cost_function(agent.eval())}
+      cost = self.util.cost_function(agent.eval())
+      agent.new_util.Q_learning(agent.initialCost, cost)
+      item = {"agent" : agent.eval(), "cost" : cost}
       aux_list.append(item)
     aux_list = sorted(aux_list, key = lambda i: i['cost'])
     self.listTabou.append(aux_list)
 
     aux_list = []
     for agent in agentsRecuit:
-      item = {"agent" : agent.eval(), "cost" : self.util.cost_function(agent.eval())}
+      cost = self.util.cost_function(agent.eval())
+      agent.new_util.Q_learning(agent.initialCost, cost)
+      item = {"agent" : agent.eval(), "cost" : cost}
       aux_list.append(item)
     aux_list = sorted(aux_list, key = lambda i: i['cost'])
     self.listRecuit.append(aux_list)
 
     aux_list = []
     for agent in agentsGenetic:
-      item = {"agent" : agent.eval(), "cost" : self.util.cost_function(agent.eval())}
+      cost = self.util.cost_function(agent.eval())
+      agent.new_util.Q_learning(agent.initialCost, cost)
+      item = {"agent" : agent.eval(), "cost" : cost}
       aux_list.append(item)
     aux_list = sorted(aux_list, key = lambda i: i['cost'])
     self.listGenetic.append(aux_list)

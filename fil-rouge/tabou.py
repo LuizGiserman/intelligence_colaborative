@@ -17,13 +17,19 @@ class tabouAgent(mesa.Agent):
         self.solution = new_util.generate_initial_solution()
         self.visited_solutions = []
         self.new_util = new_util
+
+        self.new_util.newAction()
+        holdSolution = self.solution
+        self.step()
+        self.initialCost = new_util.cost_function(self.eval())
+        self.solution = holdSolution
         
     def step(self):
         best_solution = self.solution.copy()
         current_solution = self.solution.copy()
         
         for i in range(self.max_iter):
-            neighborhood = self.new_util.generate_neighborhood(current_solution, switchNodes=self.number_neighbors)
+            neighborhood = self.new_util.generate_neighborhood(current_solution, numberNeighbors=self.number_neighbors)
 
             best_neighbor = neighborhood[0]
             for neighbor in neighborhood[1:]:

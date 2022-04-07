@@ -16,6 +16,12 @@ class geneticAgent(mesa.Agent):
         self.new_util = new_util
         self.max_iter = max_iter
 
+        self.new_util.newAction()
+        holdSolutions = self.solutions.copy()
+        self.step()
+        self.initialCost = new_util.cost_function(self.eval())
+        self.solutions = holdSolutions.copy()
+
     def selection (self, pop_before) :
         return pop_before[:int(len(pop_before)/2)]
 
@@ -80,7 +86,7 @@ class geneticAgent(mesa.Agent):
             
             pop_after.clear()
             for individual in pop :
-                aux_individual = self.new_util.generate_neighborhood(individual["individual"], numberNeighbors=1, switchNodes=5)[0]
+                aux_individual = self.new_util.generate_neighborhood(individual["individual"], numberNeighbors=1, repeat=1)[0]
                 pop_after.append({"individual":aux_individual, "fitness":self.new_util.cost_function(aux_individual)})
 
             pop_before = pop_after

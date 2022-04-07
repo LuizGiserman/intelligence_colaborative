@@ -24,6 +24,13 @@ class recuitAgent(mesa.Agent):
         self.s = self.s_best
         self.n_iter = 0
         self.new_util = new_util
+
+        self.new_util.newAction()
+        holdS_best = self.s_best
+        self.step()
+        self.initialCost = new_util.cost_function(self.eval())
+        self.s = holdS_best
+        self.s_best = holdS_best
         
     def step(self):
         if self.new_cycle == True:
