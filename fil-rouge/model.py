@@ -8,6 +8,7 @@ from genetic import geneticAgent
 from utilities import Util as util
 from eval import evalAgent
 import matplotlib.pyplot as plt
+import neighborhood as nh
 
 new_util = util()
 
@@ -35,7 +36,7 @@ class GlobalMASModel(mesa.Model):
     self.evaluator.step(self.listTabou, self.listRecuit, self.listGenetic)
 
 model = GlobalMASModel()
-for i in range(1):
+for i in range(10):
   print(i)
   model.step()
 
