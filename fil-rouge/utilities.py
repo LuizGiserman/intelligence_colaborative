@@ -88,12 +88,16 @@ class Util():
         else :
             self.action = self.Q[self.currentState].index(max(self.Q[self.currentState]))
 
-    def generate_neighborhood(self, solution, numberNeighbors = 5, repeat = 1):
+    def generate_neighborhood(self, solution, numberNeighbors = 5, repeat = 1, timeout = 20):
         neighborhood = []
 
         for neighbor in range(numberNeighbors):
             is_possible_solution = False
+            time = 0
             while not is_possible_solution:
+                if time >= timeout:
+                    new_solution = solution
+                    break
                 new_solution = solution.copy()
                 is_possible_solution = True
                 current_capacity = self.vehicle_capacity
@@ -108,6 +112,8 @@ class Util():
                         current_capacity -= self.customers[customer[2]].vol
                     if current_capacity < 0:
                         is_possible_solution = False
+                
+                time += 1
 
             neighborhood.append(new_solution)
         

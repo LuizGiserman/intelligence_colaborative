@@ -30,7 +30,7 @@ class tabouAgent(mesa.Agent):
         
         for i in range(self.max_iter):
             neighborhood = self.new_util.generate_neighborhood(current_solution, numberNeighbors=self.number_neighbors)
-
+            
             best_neighbor = neighborhood[0]
             for neighbor in neighborhood[1:]:
                 if not (neighbor in self.visited_solutions):
