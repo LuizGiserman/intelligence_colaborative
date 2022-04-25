@@ -47,9 +47,10 @@ class geneticAgent(mesa.Agent):
         for i in child1:
             if not i in child2:
                 outside.append(i)
-        for i in range(len(child2)-1):
-            if child2[i] in child2[i+1:]:
-                child2[i] = outside.pop()
+        if len(outside):
+            for i in range(len(child2)-1):
+                if child2[i] in child2[i+1:]:
+                    child2[i] = outside.pop()
         
         current_capacity = vehicle_capacity
         child = []
