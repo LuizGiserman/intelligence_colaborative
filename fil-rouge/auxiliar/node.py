@@ -1,5 +1,5 @@
+# Each node represents a customer
 class node:
-
     def __init__(self, number, code, kg, vol, start, end, lat, long):
         self.number = number
         self.code = code

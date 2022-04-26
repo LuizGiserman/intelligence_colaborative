@@ -1,6 +1,7 @@
 import random
 from collections import deque
 
+# Splits a solution into a table of routes
 def splitSolution(solution):
     solutionList = []
     route = []
@@ -14,6 +15,7 @@ def splitSolution(solution):
         solutionList.append(route)
     return solutionList
 
+# Assembles a table of routes into a solution
 def assembleSolution(solutionList):
     solution = []
     for solution_node in solutionList:
@@ -22,6 +24,7 @@ def assembleSolution(solutionList):
         solution.append((0, 0, 0))
     return solution[:-1]
 
+#---[NEIGHBORHOOD FUNCTIONS]---#
 class intraRouteSwap():
     def __init__(self):
         pass
@@ -202,6 +205,7 @@ class elimRandom():
         del solutionList[route_index]
 
         return assembleSolution(solutionList)
+#------------------------------#
 
 class functionHandler():
     def __init__(self):
