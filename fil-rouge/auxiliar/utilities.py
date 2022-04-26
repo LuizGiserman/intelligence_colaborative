@@ -1,27 +1,25 @@
-from locale import currency
 from math import radians, cos, sin, asin, sqrt
-from node import node
+from auxiliar.node import node
 import pandas as pd
 import random
-from neighborhood import functionHandler
+from auxiliar.neighborhood import functionHandler
 
 class Util():
     def __init__(self):
         self.vehicle_capacity = 20
-
         self.customers = self.load_customers().copy()
 
-        #customers are starting in 0 in this list
-        ## although the customer number starts in 1
+        # customers are starting at 0 in this list
+        ## although the customer number starts at 1
         self.distances = {}
 
         # creates a dictionary (node1, node2) to save the distances from node 1 to node 2
         ## saves half of it in order to optimize the utilized space
-        for i, node1 in enumerate(self.customers):
+        for node1 in self.customers:
             for node2 in self.customers:
                 self.distances[(node1.code, node2.code)] = self.distance(node1.lat, node2.lat, node1.long, node2.long)
 
-        # Q-learning params
+        # Q-Learning params
         self.Q = 8*[8*[0]]  # Initialization for Q matrix
         self.alpha = 0.1
         self.gamma = 0.9
@@ -33,15 +31,14 @@ class Util():
         self.functionHandler = functionHandler()
 
 
-    # Get the cost of a solution
+    # Gets the cost of a solution
     def cost_function(self, solution, numberVehicles = 1, omega = 0):
         total_distance = 0
         for i in range(len(solution)-1):
             total_distance += self.distances[(solution[i][1], solution[i+1][1])]
         return omega*numberVehicles + total_distance
 
-    #
-    ## Get distance from lat and long values.
+    # Gets the distance from lat and long values.
     def distance(self, lat1, lat2, lon1, lon2):
         
         # The math module contains a function named
@@ -64,7 +61,7 @@ class Util():
         # calculate the result
         return(c * r)
 
-
+    # Loads the customers from the Excel file
     def load_customers(self):
         customers = []
         customers_xls = pd.ExcelFile(r"bd/2_detail_table_customers.xls")
@@ -76,8 +73,8 @@ class Util():
         customers.append(node(0, 0, 0, 0, 0, 0, 43.37391833, 17.60171712))
         return customers
 
+    # Chooses the neighborhood generation function using Q-learning
     def newAction(self):
-        # Choose the neighborhood generation function using Q-learning
         self.currentState = self.action
         if not self.exploitOnly :
             p = random.uniform(0,1)
@@ -88,6 +85,7 @@ class Util():
         else :
             self.action = self.Q[self.currentState].index(max(self.Q[self.currentState]))
 
+    # Generates a neighborhood for a given solution
     def generate_neighborhood(self, solution, numberNeighbors = 5, repeat = 1, timeout = 20):
         neighborhood = []
 
@@ -95,6 +93,7 @@ class Util():
             is_possible_solution = False
             time = 0
             while not is_possible_solution:
+                # Avoids infinite loop
                 if time >= timeout:
                     new_solution = solution
                     break
@@ -104,7 +103,7 @@ class Util():
                 for node in range(repeat):
                     new_solution = self.functionHandler.execute(self.action, solution)
 
-                # Verify whether the function is possible or not
+                # Verify whether the solution is possible or not
                 for customer in new_solution:
                     if customer == (0, 0, 0):
                         current_capacity = self.vehicle_capacity
@@ -119,9 +118,11 @@ class Util():
         
         return neighborhood
 
+    # Generates an initial solution
     def generate_initial_solution(self):
         customers_clone = self.customers.copy()
 
+        # The (0, 0, 0) point is the deposit
         solution = [(0,0,0)]
         current_capacity = self.vehicle_capacity
 
@@ -136,33 +137,9 @@ class Util():
             current_capacity -= node_elt.vol
         return solution
     
+    # Applies the Q-Learning algotithm
     def Q_learning(self, initialCost, currentCost):
         reward = initialCost - currentCost
         self.Q[self.currentState][self.action] = (1-self.alpha)*self.Q[self.currentState][self.action] + self.alpha*(reward + self.gamma*max(self.Q[self.action]))
         self.newAction()
-
-    # visited = {}
-    # solution = []
-    # current_capacity = capacity
-    # n_customers = len(customers)
-    # for customer in customers:
-    #     visited[(customer.number, customer.code, )] = 0
-    
-    # solution.append((0, 0, 0))
-    # visited[(0, 0, 0)] = 1
-
-    # for i in range(n_customers):
-    #     new = random.randint(0, n_customers-1)
-    #     while (visited[(customers[new].number, customers[new].code, new)] == 1):
-    #         new = random.randint(0, n_customers-1)
-        
-    #     if (customers[new].vol > current_capacity):
-    #         solution.append((0, 0, 0))
-    #         current_capacity = capacity
-       
-    #     solution.append((customers[new].number, customers[new].code, new))
-    #     current_capacity -= customers[new].vol
-
-    # return solution
-        
     
